@@ -317,6 +317,8 @@ stock_watch_list_pscore.sort(key=lambda a: a[1])
 print(stock_watch_list_pscore)
 
 """
+Rank from lowest score to highest score for further analysis:
+
 [('2226.HK', 1), ('8316.HK', 1), ('1239.HK', 1), ('0724.HK', 1), ('8238.HK', 1), ('0901.HK', 2), ('3883.HK', 2), 
 ('0264.HK', 2), ('0776.HK', 2), ('002216.SZ', 2), ('000895.SZ', 2), ('002372.SZ', 2), ('000048.SZ', 2), ('2798.HK', 
 3), ('2293.HK', 3), ('2535.HK', 3), ('3660.HK', 3), ('1277.HK', 3), ('1165.HK', 3), ('2498.HK', 3), ('2442.HK', 3), 
