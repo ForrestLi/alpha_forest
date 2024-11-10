@@ -116,3 +116,47 @@ def get_bb_high(df):
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 2]
     )
     return df
+
+
+def compute_atr(stock_data):
+    atr = pandas_ta.atr(
+        high=stock_data["high"],
+        low=stock_data["low"],
+        close=stock_data["close"],
+        length=14,
+    )
+    return atr.sub(atr.mean()).div(atr.std())
+
+
+def get_atr(df):
+    """
+    :param data_frame: Pandas DataFrame as Input
+
+    :returns:
+    data_frame: Transformed Pandas DataFrame as Output
+    """
+    check_pandas(df)
+    df["atr"] = df.groupby(level=1, group_keys=False).apply(compute_atr)
+    return df
+
+
+def compute_macd(close):
+    """
+    :param data_frame: Pandas DataFrame as Input
+
+    :returns:
+    data_frame: Transformed Pandas DataFrame as Output
+    """
+    macd = pandas_ta.macd(close=close, length=20).iloc[:, 0]
+    return macd.sub(macd.mean()).div(macd.std())
+
+
+def get_macd(df):
+    """
+    :param data_frame: Pandas DataFrame as Input
+
+    :returns:
+    data_frame: Transformed Pandas DataFrame as Output
+    """
+    df["macd"] = df.groupby(level=1, group_keys=False)["adj close"].apply(compute_macd)
+    return df
