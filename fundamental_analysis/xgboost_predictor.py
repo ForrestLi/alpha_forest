@@ -1,7 +1,16 @@
-from sklearn.ensemble import RandomForestClassifier
+from asyncio.log import logger
+
 from sklearn.metrics import precision_score
 import sqlite3
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import xgboost as xgb
+from sklearn.metrics import mean_squared_error
+
+color_pal = sns.color_palette()
+plt.style.use("fivethirtyeight")
 
 from config import raw_target_list
 from utility import (
@@ -17,12 +26,14 @@ from utility import (
     get_return,
 )
 
-model = RandomForestClassifier(n_estimators=100, min_samples_split=100, random_state=1)
-
 target_list = []
 
 for ticker, score in raw_target_list:
     target_list.append(ticker)
+
+model = xgb.XGBRegressor(
+    n_estimators=1000, early_stopping_rounds=50, learning_rate=0.001
+)
 
 
 def train_test_split(df: pd.DataFrame):
@@ -31,10 +42,25 @@ def train_test_split(df: pd.DataFrame):
 
 
 def predict(train, test, predicators, model):
-    model.fit(train[predicators], train["state"])
+    model.fit(
+        train[predicators],
+        train["state"],
+        eval_set=[
+            (train[predicators], train["state"]),
+            (test[predicators], test["state"]),
+        ],
+        verbose=True,
+    )
     preds = model.predict(test[predicators])
+    logger.info(f"feature importance: {model.feature_importances_}")
+    fi = pd.DataFrame(
+        data=model.feature_importances_,
+        index=model.feature_names_in_,
+        columns=["importance"],
+    )
+    fi.sort_values("importance").plot(kind="barh", title="Feature Importance")
+    plt.show()
     preds = pd.Series(preds, index=test.index, name="Predictions")
-    precision_score(test["state"], preds)
     combined = pd.concat([test["state"], preds], axis=1)
     return combined
 
@@ -67,12 +93,5 @@ for ticker in target_list:
         #   "macd",
     ]
     target = ["state"]
-    # model.fit(train[predictors], train[target])
-    RandomForestClassifier(min_samples_split=100, random_state=1)
-    # preds = model.predict(test[predictors])
-    # preds = pd.Series(preds, index=test.index)
-    # precision_score(test["state"], preds)
-
-    # combined = pd.concat([test["state"], preds], axis=1)
     combined = predict(train, test, predictors, model)
     combined.plot()

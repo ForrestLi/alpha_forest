@@ -87,7 +87,7 @@ def get_state(df: pd.DataFrame):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["state"] = np.where(df["Return"] > 0, "up", "down")
+    df["state"] = np.where(df["Return"] > 0, "1", "0")
     return df
 
 
@@ -99,9 +99,9 @@ def get_garman_klass_vol(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["garman_klass_vol"] = ((np.log(df["high"]) - np.log(df["low"])) ** 2) / 2 - (
+    df["garman_klass_vol"] = ((np.log(df["High"]) - np.log(df["Low"])) ** 2) / 2 - (
         2 * np.log(2) - 1
-    ) * ((np.log(df["adj close"]) - np.log(df["open"])) ** 2)
+    ) * ((np.log(df["Adj Close"]) - np.log(df["Open"])) ** 2)
     logger.info("Process completed for function: get_garman_klass_vol..")
     return df
 
@@ -114,14 +114,12 @@ def get_rsi(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["rsi"] = df.groupby(level=1)["adj close"].transform(
-        lambda x: pandas_ta.rsi(close=x, length=20)
-    )
+    df["rsi"] = df["Adj Close"].transform(lambda x: pandas_ta.rsi(close=x, length=20))
     logger.info("Process completed for function: get_rsi..")
     return df
 
 
-def get_adj_close(df):
+def get_bb_low(df):
     """
     :param data_frame: Pandas DataFrame as Input
 
@@ -129,11 +127,11 @@ def get_adj_close(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["bb_low"] = df.groupby(level=1)["adj close"].transform(
+    df["bb_low"] = df["Adj Close"].transform(
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 0]
     )
     # normalize the value by dividing it against adjust close price)
-    df["bb_low"] = df["bb_low"] / df["adj close"]
+    df["bb_low"] = df["bb_low"] / df["Adj Close"]
     return df
 
 
@@ -145,11 +143,11 @@ def get_bb_mid(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["bb_mid"] = df.groupby(level=1)["adj close"].transform(
+    df["bb_mid"] = df["Adj Close"].transform(
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 1]
     )
     # normalize the value by dividing it against adjust close price)
-    df["bb_mid"] = df["bb_mid"] / df["adj close"]
+    df["bb_mid"] = df["bb_mid"] / df["Adj Close"]
     return df
 
 
@@ -161,19 +159,19 @@ def get_bb_high(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["bb_high"] = df.groupby(level=1)["adj close"].transform(
+    df["bb_high"] = df["Adj Close"].transform(
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 2]
     )
     # normalize the value by dividing it against adjust close price)
-    df["bb_high"] = df["bb_high"] / df["adj close"]
+    df["bb_high"] = df["bb_high"] / df["Adj Close"]
     return df
 
 
 def compute_atr(stock_data):
     atr = pandas_ta.atr(
-        high=stock_data["high"],
-        low=stock_data["low"],
-        close=stock_data["close"],
+        high=stock_data["High"],
+        low=stock_data["Low"],
+        close=stock_data["Close"],
         length=14,
     )
     return atr.sub(atr.mean()).div(atr.std())
@@ -187,7 +185,7 @@ def get_atr(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["atr"] = df.groupby(level=1, group_keys=False).apply(compute_atr)
+    df["atr"] = df.apply(compute_atr)
     return df
 
 
@@ -209,7 +207,7 @@ def get_macd(df):
     :returns:
     data_frame: Transformed Pandas DataFrame as Output
     """
-    df["macd"] = df.groupby(level=1, group_keys=False)["adj close"].apply(compute_macd)
+    df["macd"] = df["Adj Close"].apply(compute_macd)
     return df
 
 
@@ -220,5 +218,5 @@ def get_dollar_volume(df):
     :returns:
     data_frame: Transformed Pandas DataFrame as Output
     """
-    df["dollar_volume"] = (df["adj close"] * df["volume"]) / 1e6
+    df["dollar_volume"] = (df["Adj Close"] * df["Volume"]) / 1e6
     return df

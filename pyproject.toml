@@ -9,6 +9,12 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 yfinance = "^0.2.43"
+pandas = "^2.2.3"
+pandas-ta = "^0.3.14b0"
+sqlalchemy = "^2.0.36"
+xgboost = "^2.1.2"
+matplotlib = "^3.9.2"
+seaborn = "^0.13.2"
 
 
 [build-system]
