@@ -160,3 +160,14 @@ def get_macd(df):
     """
     df["macd"] = df.groupby(level=1, group_keys=False)["adj close"].apply(compute_macd)
     return df
+
+
+def get_dollar_volume(df):
+    """
+    :param data_frame: Pandas DataFrame as Input
+
+    :returns:
+    data_frame: Transformed Pandas DataFrame as Output
+    """
+    df["dollar_volume"] = (df["adj close"] * df["volume"]) / 1e6
+    return df
