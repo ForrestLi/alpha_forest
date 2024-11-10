@@ -1,20 +1,28 @@
-import math
 import time
 
 import pandas as pd
-import yfinance as yf
 from config.parser import logger
 
 from fundamental_analysis.stock_info import Stock_Info
-from utilities import vaid_hk_ticker_generator, vaid_shanghai_ticker_generator, vaid_shenzhen_ticker_generator, \
-    vaid_b_ticker_generator, vaid_techboard_ticker_generator
+from utilities import (
+    vaid_hk_ticker_generator,
+    vaid_shanghai_ticker_generator,
+    vaid_shenzhen_ticker_generator,
+    vaid_b_ticker_generator,
+    vaid_techboard_ticker_generator,
+)
 
 stock_watch_list = []
 
 
 def test_filter():
-    for generator in [vaid_shenzhen_ticker_generator(), vaid_shanghai_ticker_generator(), vaid_hk_ticker_generator(),
-                      vaid_techboard_ticker_generator(), vaid_b_ticker_generator()]:
+    for generator in [
+        vaid_shenzhen_ticker_generator(),
+        vaid_shanghai_ticker_generator(),
+        vaid_hk_ticker_generator(),
+        vaid_techboard_ticker_generator(),
+        vaid_b_ticker_generator(),
+    ]:
         for ticker in generator:
             try:
                 stock = Stock_Info(ticker)
@@ -22,21 +30,25 @@ def test_filter():
                 if roe[0]:
                     average_roe = roe[1]
                     stock_watch_list.append((ticker, average_roe))
-                    logger.info(f'ticker {ticker} with roe = {average_roe} has been appended to stock watch list')
-                    pickle_file_path = 'D:/alpha_forest/data'
+                    logger.info(
+                        f"ticker {ticker} with roe = {average_roe} has been appended to stock watch list"
+                    )
+                    pickle_file_path = "D:/alpha_forest/data"
                     yt = stock._ticker
                     for attr in dir(yt):
                         if isinstance(getattr(ticker, attr), pd.DataFrame):
-                            yt.__getattribute__(attr).to_pickle(f'{pickle_file_path}/{ticker}{attr}.pkl')
+                            yt.__getattribute__(attr).to_pickle(
+                                f"{pickle_file_path}/{ticker}{attr}.pkl"
+                            )
                 time.sleep(1)
             except Exception as e:
-                print(' ... failed', e)
+                print(" ... failed", e)
 
 
 # step 1:
 test_filter()
 stock_watch_list.sort(key=lambda a: a[1])
-logger.info(f'raw stock watch list: {stock_watch_list}')
+logger.info(f"raw stock watch list: {stock_watch_list}")
 
 stock_watch_list_pscore = []
 
