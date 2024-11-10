@@ -24,21 +24,26 @@ def calculate_option_price(S, K, r, T, N, sigma, div_dates, div_amounts):
     option_prices = np.zeros((N + 1, N + 1))
     early_exercise_indicator = np.zeros((N + 1, N + 1))
     for j in range(N + 1):
-        option_prices[N, j] = max(0, stock_prices[N, j] - K - div_present_value)  # Option payoff at maturity
+        option_prices[N, j] = max(
+            0, stock_prices[N, j] - K - div_present_value
+        )  # Option payoff at maturity
 
     for i in range(N - 1, -1, -1):
         for j in range(i + 1):
             option_prices[i, j] = np.exp(-r * dt) * (
-                        p * option_prices[i + 1, j + 1] + (1 - p) * option_prices[i + 1, j])
+                p * option_prices[i + 1, j + 1] + (1 - p) * option_prices[i + 1, j]
+            )
             stock_price_ex_div = stock_prices[i, j] - div_present_value
             early_exercise = max(0, K - stock_price_ex_div)
-            option_prices[i, j] = max(option_prices[i, j], early_exercise)  # Consider early exercise
+            option_prices[i, j] = max(
+                option_prices[i, j], early_exercise
+            )  # Consider early exercise
             if early_exercise > 0:
                 early_exercise_indicator[i, j] = 1  # Early exercise indicator
 
     return {
-        'option_prices': option_prices,
-        'early_exercise_indicator': early_exercise_indicator
+        "option_prices": option_prices,
+        "early_exercise_indicator": early_exercise_indicator,
         # Other characteristics can also be calculated here
     }
 
@@ -54,5 +59,5 @@ div_dates = [0]  # Dividend dates
 div_amounts = [0]  # Dividend amounts
 
 result = calculate_option_price(S, K, r, T, N, sigma, div_dates, div_amounts)
-print(result['option_prices'])
-print(result['early_exercise_indicator'])
+print(result["option_prices"])
+print(result["early_exercise_indicator"])

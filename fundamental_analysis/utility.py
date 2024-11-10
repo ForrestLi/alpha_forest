@@ -7,6 +7,38 @@ import pandas_ta as pandas_ta
 import pandas as pd
 
 
+"""
+Hong Kong, Shenzhen, Shanghai stocks used number + exch appendix (e.g. HK, SZ, SS)
+so used a generator to generate the possible value within a pre-defined range.
+"""
+
+
+def vaid_shenzhen_ticker_generator():
+    for i in range(1000001, 1011980):
+        yield str(i)[1:] + ".SZ"
+
+
+def vaid_techboard_ticker_generator():
+    for i in range(1300001, 1301000):
+        yield str(i)[1:] + ".SZ"
+
+
+def vaid_b_ticker_generator():
+    for i in range(1200002, 1201000):
+        # for i in range(1201000,1202000):
+        yield str(i)[1:]
+
+
+def vaid_shanghai_ticker_generator():
+    for i in range(1600001, 1603800):
+        yield str(i)[1:] + ".SS"
+
+
+def vaid_hk_ticker_generator():
+    for i in range(10001, 19999):
+        yield str(i)[1:] + ".HK"
+
+
 def get_data(tickers):
     data = []
     for ticker in tickers:
@@ -100,6 +132,8 @@ def get_adj_close(df):
     df["bb_low"] = df.groupby(level=1)["adj close"].transform(
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 0]
     )
+    # normalize the value by dividing it against adjust close price)
+    df["bb_low"] = df["bb_low"] / df["adj close"]
     return df
 
 
@@ -114,6 +148,8 @@ def get_bb_mid(df):
     df["bb_mid"] = df.groupby(level=1)["adj close"].transform(
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 1]
     )
+    # normalize the value by dividing it against adjust close price)
+    df["bb_mid"] = df["bb_mid"] / df["adj close"]
     return df
 
 
@@ -128,6 +164,8 @@ def get_bb_high(df):
     df["bb_high"] = df.groupby(level=1)["adj close"].transform(
         lambda x: pandas_ta.bbands(close=np.log1p(x), length=20).iloc[:, 2]
     )
+    # normalize the value by dividing it against adjust close price)
+    df["bb_high"] = df["bb_high"] / df["adj close"]
     return df
 
 

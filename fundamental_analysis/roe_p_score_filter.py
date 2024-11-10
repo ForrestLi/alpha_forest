@@ -4,7 +4,7 @@ import pandas as pd
 from config.parser import logger
 
 from fundamental_analysis.stock_info import Stock_Info
-from utilities import (
+from utility import (
     vaid_hk_ticker_generator,
     vaid_shanghai_ticker_generator,
     vaid_shenzhen_ticker_generator,

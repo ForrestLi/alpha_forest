@@ -1,7 +1,7 @@
 import yfinance as yf
 import matplotlib.pyplot as plt
 
-ticker = yf.Ticker('BABA')
+ticker = yf.Ticker("BABA")
 
 print(ticker.options)
 
@@ -13,7 +13,6 @@ option_chain = ticker.option_chain(expriation)
 puts = option_chain.puts
 puts = puts[puts.openInterest >= 200]
 print(puts)
-plt.figure(figsize=(10,8))
-plt.plot(puts['strike'], puts['impliedVolatility'])
+plt.figure(figsize=(10, 8))
+plt.plot(puts["strike"], puts["impliedVolatility"])
 plt.show()
-
