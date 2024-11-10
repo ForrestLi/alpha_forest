@@ -41,8 +41,21 @@ def get_return(df: pd.DataFrame):
     data_frame: Transformed Pandas DataFrame as Output
     """
     check_pandas(df)
-    df["% Change"] = round(df["Adj Close"] / df["Adj Close"].shift(1) - 1, 4)
+    # also could just be df["Adj Close"].pct_change()
+    df["Return"] = round(df["Adj Close"] / df["Adj Close"].shift(1) - 1, 4)
     logger.info("Process completed for function: get_return..")
+    return df
+
+
+def get_state(df: pd.DataFrame):
+    """
+    :param data_frame: Pandas DataFrame as Input
+
+    :returns:
+    data_frame: Transformed Pandas DataFrame as Output
+    """
+    check_pandas(df)
+    df["state"] = np.where(df["Return"] > 0, "up", "down")
     return df
 
 
