@@ -1,4 +1,4 @@
-raw_target_list = [
+raw_china_target_list = [
     ("6113.HK", 5),
     ("1730.HK", 5),
     ("0669.HK", 5),
@@ -61,4 +61,22 @@ raw_target_list = [
     ("2669.HK", 6),
     ("3306.HK", 6),
     ("4336.HK", 6),
+    ("9988.HK", 7),
+    ("1787.HK", 7)
 ]
+
+raw_us_target_list = [('BALL', 5), ('RMD', 5), ('MPWR', 5), ('MNST', 5), ('SWKS', 5), ('WST', 5), ('KEYS', 5),
+                      ('JKHY', 5), ('GOOGL', 5),
+                      ('GOOG', 5), ('META', 5), ('UNH', 5), ('DHI', 5), ('MKTX', 5), ('PHM', 5), ('URI', 5),
+                      ('NFLX', 5), ('REGN', 5), ('MMC', 5),
+                      ('CDNS', 5), ('WM', 5), ('LYB', 5), ('ODFL', 5), ('CARR', 5), ('BR', 5), ('LULU', 5), ('CMG', 5),
+                      ('PG', 5), ('JNJ', 5),
+                      ('FDS', 5), ('TPR', 5), ('K', 5), ('CTAS', 5), ('EMR', 5), ('DG', 5), ('OMC', 5), ('NVDA', 5),
+                      ('CAT', 5), ('V', 5),
+                      ('AMT', 5), ('NKE', 5), ('KO', 5), ('UNP', 5), ('ZTS', 5), ('ALLE', 5), ('TSCO', 5), ('PEP', 5),
+                      ('HSY', 5), ('GWW', 5),
+                      ('ROK', 5), ('SPG', 5), ('SHW', 5), ('VRSK', 5), ('DVA', 5), ('AMGN', 5), ('AAPL', 5), ('CL', 5),
+                      ('KR', 6), ('CPRT', 6),
+                      ('HII', 6), ('MOH', 6), ('CPAY', 6), ('FAST', 6), ('ADBE', 6), ('PAYX', 6), ('AMAT', 6),
+                      ('QCOM', 6), ('ADP', 6), ('IDXX', 6),
+                      ('IT', 6), ('KMB', 6)]

@@ -5,7 +5,7 @@ import yfinance as yf
 import numpy as np
 import pandas_ta as pandas_ta
 import pandas as pd
-
+import talib as tb
 
 """
 Hong Kong, Shenzhen, Shanghai stocks used number + exch appendix (e.g. HK, SZ, SS)
@@ -37,6 +37,14 @@ def vaid_shanghai_ticker_generator():
 def vaid_hk_ticker_generator():
     for i in range(10001, 19999):
         yield str(i)[1:] + ".HK"
+
+
+def sp_500_generator():
+    table = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    df = table[0]
+    tickers = df.Symbol.to_list()
+    for t in tickers:
+        yield t
 
 
 def get_data(tickers):
@@ -100,7 +108,7 @@ def get_garman_klass_vol(df):
     """
     check_pandas(df)
     df["garman_klass_vol"] = ((np.log(df["High"]) - np.log(df["Low"])) ** 2) / 2 - (
-        2 * np.log(2) - 1
+            2 * np.log(2) - 1
     ) * ((np.log(df["Adj Close"]) - np.log(df["Open"])) ** 2)
     logger.info("Process completed for function: get_garman_klass_vol..")
     return df
@@ -219,4 +227,37 @@ def get_dollar_volume(df):
     data_frame: Transformed Pandas DataFrame as Output
     """
     df["dollar_volume"] = (df["Adj Close"] * df["Volume"]) / 1e6
+    return df
+
+
+def get_technical_analysis_features(df, ticker):
+    """
+    use talib to get tech indicators directory
+    """
+    o = df['Open'].values
+    c = df['Close'].values
+    h = df['High'].values
+    l = df['Low'].values
+    v = df['Volume'].astype(float).values
+    # define the technical analysis matrix
+
+    df['MA5'] = tb.MA(c, timeperiod=5)
+    df['MA10'] = tb.MA(c, timeperiod=10)
+    df['MA20'] = tb.MA(c, timeperiod=20)
+    df['MA60'] = tb.MA(c, timeperiod=60)
+    df['MA120'] = tb.MA(c, timeperiod=120)
+    df['MA5'] = tb.MA(v, timeperiod=5)
+    df['MA10'] = tb.MA(v, timeperiod=10)
+    df['MA20'] = tb.MA(v, timeperiod=20)
+    df['ADX'] = tb.ADX(h, l, c, timeperiod=14)
+    df['ADXR'] = tb.ADXR(h, l, c, timeperiod=14)
+    df['MACD'] = tb.MACD(c, fastperiod=12, slowperiod=26, signalperiod=9)[0]
+    df['RSI'] = tb.RSI(c, timeperiod=14)
+    df['BBANDS_U'] = tb.BBANDS(c, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)[0]
+    df['BBANDS_M'] = tb.BBANDS(c, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)[1]
+    df['BBANDS_L'] = tb.BBANDS(c, timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)[2]
+    df['AD'] = tb.AD(h, l, c, v)
+    df['ATR'] = tb.ATR(h, l, c, timeperiod=14)
+    df['HT_DC'] = tb.HT_DCPERIOD(c)
+
     return df
