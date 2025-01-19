@@ -12,52 +12,58 @@ from utility import (
     vaid_techboard_ticker_generator, sp_500_generator,
 )
 
-stock_watch_list = []
 
+def roe_filter():
+    stock_watch_list = []
 
-def test_filter():
     for generator in [
-        # vaid_shenzhen_ticker_generator(),
-        # vaid_shanghai_ticker_generator(),
-        # vaid_hk_ticker_generator(),
-        # vaid_techboard_ticker_generator(),
-        # vaid_b_ticker_generator(),
+        vaid_shenzhen_ticker_generator(),
+        vaid_shanghai_ticker_generator(),
+        vaid_hk_ticker_generator(),
+        vaid_techboard_ticker_generator(),
+        vaid_b_ticker_generator(),
         sp_500_generator()
     ]:
         for ticker in generator:
             try:
                 stock = Stock_Info(ticker)
-                roe = stock.roe_filter(0.2, 0.15)
+                roe = stock.roe_filter(0.15, 0.09)
                 if roe[0]:
                     average_roe = roe[1]
                     stock_watch_list.append((ticker, average_roe))
                     logger.info(
                         f"ticker {ticker} with roe = {average_roe} has been appended to stock watch list"
                     )
-                    pickle_file_path = "D:/alpha_forest/data"
-                    yt = stock._ticker
-                    for attr in dir(yt):
-                        if isinstance(getattr(ticker, attr), pd.DataFrame):
-                            yt.__getattribute__(attr).to_pickle(
-                                f"{pickle_file_path}/{ticker}{attr}.pkl"
-                            )
+                    #pickle_file_path = "D:/alpha_forest/data"
+                    #yt = stock._ticker
+                    #for attr in dir(yt):
+                    #    if isinstance(getattr(ticker, attr), pd.DataFrame):
+                    #        yt.__getattribute__(attr).to_pickle(
+                    #            f"{pickle_file_path}/{ticker}{attr}.pkl"
+                    #        )
                 time.sleep(1)
             except Exception as e:
                 print(" ... failed", e)
+    return stock_watch_list
+
+
+def piotroski_score_filter(r_list):
+    stock_watch_list_pscore = []
+    for ticker, _ in stock_watch_list:
+        stock = Stock_Info(ticker)
+        stock_watch_list_pscore.append((ticker, stock.piotroski_score()))
+    stock_watch_list_pscore.sort(key=lambda a: a[1])
+    print(stock_watch_list_pscore)
+    list_lenth = len(stock_watch_list_pscore)
+    top_twenty_percent = int(list_lenth * 0.2)
+    return stock_watch_list_pscore[-top_twenty_percent:]
 
 
 # step 1:
-test_filter()
+stock_watch_list = roe_filter()
 stock_watch_list.sort(key=lambda a: a[1])
 logger.info(f"raw stock watch list: {stock_watch_list}")
-
-stock_watch_list_pscore = []
-
-for ticker, _ in stock_watch_list:
-    stock = Stock_Info(ticker)
-    stock_watch_list_pscore.append((ticker, stock.piotroski_score()))
-stock_watch_list_pscore.sort(key=lambda a: a[1])
-print(stock_watch_list_pscore)
+print(f"final target with score:: {piotroski_score_filter(stock_watch_list)}")
 
 """Rank from lowest score to highest score for further analysis: 
 remove the ones less than score 5

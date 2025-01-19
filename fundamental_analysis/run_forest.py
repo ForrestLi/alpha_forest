@@ -19,6 +19,9 @@ import lightgbm as lgb
 import gc
 from itertools import chain
 from config import raw_china_target_list as raw_target_list
+import os
+
+os.environ["PATH"] += os.pathsep + "C:/Program Files/Graphviz/bin/"
 
 target_list = []
 
@@ -47,7 +50,7 @@ class Data:
         ChinaEngine = create_engine("China")
 
         df = pd.read_sql(f"select * from '{self.q}'", ChinaEngine.raw_connection())
-        df.columns = ['Date', 'Close', 'High', 'Low', 'Open', 'Volume']
+        df.columns = ['Date',  'Close', 'High', 'Low', 'Open', 'Volume']
         self.daily_data = df
 
     def technical_indicators_df(self):
@@ -124,21 +127,21 @@ class Display:
         self.Xy.hist(bins=50, figsize=(20, 15), color='darkgreen')
         plt.title(f'{ticker}')
         plt.savefig(f'{ticker}features_histograms.png', bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
     def plot_corr_heatmap(self, ticker=None):
         f, ax = plt.subplots(figsize=(20, 20))
         sns.heatmap(self.Xy.iloc[:, 0:-1].corr(), annot=True, linewidths=.5, fmt='.1f', ax=ax)
         plt.title(f'corr heatmap for {ticker}')
         plt.savefig(f'{ticker}plot_corr_heatmap.png', bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
     def plot_corr_heatmap_fs(self, ticker=None):
         f, ax = plt.subplots(figsize=(20, 20))
         plt.title(f'corr heatmap fs for {ticker}')
         sns.heatmap(self.Xy_fs.iloc[:, 0:-1].corr(), annot=True, linewidths=.5, fmt='.1f', ax=ax)
         plt.savefig(f'{ticker}plot_corr_heatmap_fs.png', bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
 
 class XGB_training:
@@ -254,21 +257,24 @@ class XGB_training:
             ax.legend()
             ax.set_ylabel(m)
             plt.savefig('training.png', bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
         # plot feature importances
         ax = xgboost.plot_importance(self.best_xgb.get_booster())
         fig = ax.figure
         fig.set_size_inches(14, 8)
         plt.savefig('plot_importance.png', bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
         # plot tree
-        ax = xgboost.plot_tree(self.best_xgb.get_booster(), num_trees=4)
+        try:
+            ax = xgboost.plot_tree(self.best_xgb.get_booster(), num_trees=4)
+        except IndexError:
+            ax = xgboost.plot_tree(self.best_xgb.get_booster(), num_trees=3)
         fig = ax.figure
         fig.set_size_inches(8, 8)
         plt.savefig('tree.png', bbox_inches='tight')
-        plt.show()
+        #plt.show()
 
 
 class FeatureSelector():
@@ -379,9 +385,9 @@ class FeatureSelector():
 
         # Find the columns with a missing percentage above the threshold
         record_missing = pd.DataFrame(missing_series[missing_series > missing_threshold]).reset_index().rename(columns=
-                                                                                                               {
-                                                                                                                   'index': 'feature',
-                                                                                                                   0: 'missing_fraction'})
+        {
+            'index': 'feature',
+            0: 'missing_fraction'})
 
         to_drop = list(record_missing['feature'])
 
@@ -886,7 +892,8 @@ class FeatureSelector():
         # Plot labeling
         plt.xlabel('Normalized Importance', size=16);
         plt.title('Feature Importances', size=18)
-        plt.show()
+        #plt.show()
+        plt.savefig('feature_importances.png', bbox_inches='tight')
 
         # Cumulative importance plot
         plt.figure(figsize=(6, 4))
@@ -901,8 +908,8 @@ class FeatureSelector():
             # np.where returns the index so need to add 1 to have correct number
             importance_index = np.min(np.where(self.feature_importances['cumulative_importance'] > threshold))
             plt.vlines(x=importance_index + 1, ymin=0, ymax=1, linestyles='--', colors='blue')
-            plt.show();
-
+            #plt.show();
+            plt.savefig('cumulative_importances.png', bbox_inches='tight')
             print('%d features required for %0.2f of cumulative importance' % (importance_index + 1, threshold))
 
     def reset_plot(self):
@@ -913,8 +920,8 @@ class FeatureSelector():
 def main():
     """
     The main program
-
     """
+
     for ticker in target_list:
         print("\n")
         print(
