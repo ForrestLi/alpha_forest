@@ -198,4 +198,5 @@ class Stock_Info:
         if average_roe >= average_roe_requriement and n > 3:
             return True, average_roe
         else:
+            print(f"{self.ticker_name} is less than 4 years, so will not be considered")
             return False, average_roe

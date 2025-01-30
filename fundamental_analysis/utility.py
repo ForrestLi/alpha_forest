@@ -14,7 +14,7 @@ so used a generator to generate the possible value within a pre-defined range.
 
 
 def vaid_shenzhen_ticker_generator():
-    for i in range(1000001, 1011980):
+    for i in range(1000001, 1003050):
         yield str(i)[1:] + ".SZ"
 
 

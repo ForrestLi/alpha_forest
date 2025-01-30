@@ -31,7 +31,7 @@ def roe_filter():
                 if roe[0]:
                     average_roe = roe[1]
                     stock_watch_list.append((ticker, average_roe))
-                    logger.info(
+                    print(
                         f"ticker {ticker} with roe = {average_roe} has been appended to stock watch list"
                     )
                     #pickle_file_path = "D:/alpha_forest/data"
