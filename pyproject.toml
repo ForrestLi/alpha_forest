@@ -5,10 +5,11 @@ description = "some alpha ideas based on investment gurus' papers"
 authors = ["forrest.li"]
 license = "MIT"
 readme = "README.md"
+email = "forrest.shijili@gmail.com"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-yfinance = "^0.2.43"
+yfinance = "^0.2.55"
 pandas = "^2.2.3"
 pandas-ta = "^0.3.14b0"
 sqlalchemy = "^2.0.36"
