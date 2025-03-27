@@ -9,7 +9,8 @@ from utility import (
     vaid_shanghai_ticker_generator,
     vaid_shenzhen_ticker_generator,
     vaid_b_ticker_generator,
-    vaid_techboard_ticker_generator, sp_500_generator,
+    vaid_techboard_ticker_generator,
+    sp_500_generator,
 )
 
 
@@ -22,7 +23,7 @@ def roe_filter():
         vaid_hk_ticker_generator(),
         vaid_techboard_ticker_generator(),
         vaid_b_ticker_generator(),
-        sp_500_generator()
+        sp_500_generator(),
     ]:
         for ticker in generator:
             try:
@@ -34,9 +35,9 @@ def roe_filter():
                     print(
                         f"ticker {ticker} with roe = {average_roe} has been appended to stock watch list"
                     )
-                    #pickle_file_path = "D:/alpha_forest/data"
-                    #yt = stock._ticker
-                    #for attr in dir(yt):
+                    # pickle_file_path = "D:/alpha_forest/data"
+                    # yt = stock._ticker
+                    # for attr in dir(yt):
                     #    if isinstance(getattr(ticker, attr), pd.DataFrame):
                     #        yt.__getattribute__(attr).to_pickle(
                     #            f"{pickle_file_path}/{ticker}{attr}.pkl"

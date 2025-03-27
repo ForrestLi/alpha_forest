@@ -40,7 +40,9 @@ for day in range(market_simulation_days):
         cash_puts += put_premium * (cash_for_puts // strike_price)
 
     # Update portfolio value for no-put strategy
-    portfolio_values_no_puts[day] = cash_no_puts + owned_shares_no_puts * stock_prices[day]
+    portfolio_values_no_puts[day] = (
+        cash_no_puts + owned_shares_no_puts * stock_prices[day]
+    )
 
 
 # Calculate total return and volatility
@@ -54,7 +56,9 @@ return_puts, vol_puts = calculate_metrics(portfolio_values_puts)
 return_no_puts, vol_no_puts = calculate_metrics(portfolio_values_no_puts)
 
 print(f"Strategy with Puts: Return = {return_puts:.2%}, Volatility = {vol_puts:.2%}")
-print(f"Strategy without Puts: Return = {return_no_puts:.2%}, Volatility = {vol_no_puts:.2%}")
+print(
+    f"Strategy without Puts: Return = {return_no_puts:.2%}, Volatility = {vol_no_puts:.2%}"
+)
 
 
 # Compute maximum drawdown
